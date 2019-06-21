@@ -1,0 +1,14 @@
+debug: False
+
+logging_format: '{"source":"%(name)s","time":"%(asctime)s","severity":"%(levelname)s","message":"%(message)s"}'
+logging_date_format: '%Y-%m-%dT%H:%M:%S.0Z'
+
+environment:
+  - CHUNKGRAPH_STORAGE=bigtable # use the same names from below
+
+# TODO design a common
+# YAML structure for storage services
+bigtable:
+  environment:
+    - CHUNKGRAPH_INSTANCE_ID=pychunkedgraph
+    - CHUNKGRAPH_TABLE_ID=fly_v26
