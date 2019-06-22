@@ -4,7 +4,6 @@ FROM tiangolo/uwsgi-nginx-flask:python3.6
 COPY override/timeout.conf /etc/nginx/conf.d/timeout.conf
 COPY override/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY requirements.txt /app
-COPY pcg.tar.gz /app
 RUN mkdir -p /home/nginx/.cloudvolume/secrets \
   && chown -R nginx /home/nginx \
   && usermod -d /home/nginx -s /bin/bash nginx \
