@@ -5,3 +5,4 @@ python-json-logger
 middle-auth-client>=0.1.6
 pyOpenSSL
 -e git+https://github.com/seung-lab/igneous.git#egg=igneous
+-e git+https://github.com/seung-lab/PyChunkedGraph.git@akhilesh-decouple-flask#egg=pychunkedgraph
