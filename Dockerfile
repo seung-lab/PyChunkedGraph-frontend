@@ -39,7 +39,6 @@ RUN mkdir -p /home/nginx/.cloudvolume/secrets \
   #   Need numpy to prevent install issue with cloud-volume / fpzip
   && pip install --no-cache-dir --upgrade numpy \
   && pip install --no-cache-dir --upgrade --process-dependency-links -r requirements.txt \
-  && pip install pcg.tar.gz \
   #   Tests
   && pip install tox codecov \
   # CLEANUP
