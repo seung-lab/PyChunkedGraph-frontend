@@ -188,7 +188,6 @@ def handle_root_main(table_id, atomic_id, timestamp):
     cg = app_utils.get_cg(table_id)
     root_id = cg.get_root(np.uint64(atomic_id), time_stamp=timestamp)
 
-    return str(root_id)
     return app_utils.tobinary(root_id)
 
 
