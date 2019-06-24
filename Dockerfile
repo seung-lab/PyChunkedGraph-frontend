@@ -38,6 +38,7 @@ RUN mkdir -p /home/nginx/.cloudvolume/secrets \
   && pip install --no-cache-dir pip==18.1 \
   #   Need numpy to prevent install issue with cloud-volume / fpzip
   && pip install --no-cache-dir --upgrade numpy \
+  && pip install -e git+https://github.com/seung-lab/igneous.git#egg=igneous \
   && pip install --no-cache-dir --upgrade --process-dependency-links -r requirements.txt \
   #   Tests
   && pip install tox codecov \
