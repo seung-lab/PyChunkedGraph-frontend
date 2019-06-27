@@ -1,6 +1,3 @@
-from flask import Blueprint, request, make_response, jsonify, current_app,\
-    redirect, url_for, after_this_request, Response
-
 import json
 import numpy as np
 import time
@@ -10,6 +7,9 @@ import traceback
 import collections
 import requests
 import threading
+
+from flask import Blueprint, request, make_response, jsonify, current_app,\
+    redirect, url_for, after_this_request, Response
 
 from pcgserver.app import app_utils, meshing_app_blueprint
 from pychunkedgraph.backend import chunkedgraph_exceptions as cg_exceptions, \
@@ -29,8 +29,9 @@ bp = Blueprint('pcgserver', __name__, url_prefix="/segmentation")
 @bp.route('/')
 @bp.route("/index")
 def index():
-    testing.foo_test('hello there')
-    return "PyChunkedGraph Server -- " + __version__
+    return testing.foo_test('hello there')
+    # print('called socket test')
+    # return "PyChunkedGraph Server -- " + __version__
 
 
 @bp.route

@@ -23,12 +23,20 @@ os.environ['TRAVIS_BRANCH'] = "IDONTKNOWWHYINEEDTHIS"
 socketio = SocketIO()
 
 
-@socketio.on('test')
+@socketio.on('message')
 def test(data):
     print(data)
 
 
+@socketio.on('connect')
+def test():
+    print('connecteddddddddddddddddddddddddddddddddd')
+    emit('message', 'booya')
+
+
 def create_app(test_config=None):
+    template_dir = os.path.abspath('../templates')
+    print('template dir ======= ', template_dir)
     app = Flask(__name__)
     app.json_encoder = CustomJsonEncoder
 

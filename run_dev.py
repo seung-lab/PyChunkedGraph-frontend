@@ -1,10 +1,16 @@
 import sys
-from werkzeug.serving import WSGIRequestHandler
 import os
+
+from werkzeug.serving import WSGIRequestHandler
+from flask import render_template
 
 from pcgserver.app import create_app
 
 app = create_app()
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 if __name__ == '__main__':
 
