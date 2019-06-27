@@ -20,6 +20,15 @@ class DoNothingCreds(credentials.Credentials):
         pass
 
 
+class CustomJsonEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, datetime.datetime):
+            return obj.__str__()
+        return json.JSONEncoder.default(self, obj)        
+
+
 def get_bigtable_client(config):
     project_id = config.get('project_id', 'pychunkedgraph')
 

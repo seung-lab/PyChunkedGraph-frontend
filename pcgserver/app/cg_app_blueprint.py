@@ -15,6 +15,7 @@ from pcgserver.app import app_utils, meshing_app_blueprint
 from pychunkedgraph.backend import chunkedgraph_exceptions as cg_exceptions, \
     chunkedgraph_comp as cg_comp
 from pychunkedgraph.api import segmentation
+from pychunkedgraph.api import testing
 from middle_auth_client import auth_required, auth_requires_roles
 
 __version__ = 'fafb.1.2'
@@ -28,6 +29,7 @@ bp = Blueprint('pcgserver', __name__, url_prefix="/segmentation")
 @bp.route('/')
 @bp.route("/index")
 def index():
+    testing.foo_test('hello there')
     return "PyChunkedGraph Server -- " + __version__
 
 
