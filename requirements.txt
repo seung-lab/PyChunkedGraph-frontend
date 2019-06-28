@@ -1,6 +1,7 @@
 -e git+https://github.com/seung-lab/PyChunkedGraph.git@akhilesh-decouple-flask#egg=pychunkedgraph
 flask
 flask_cors
+flask-socketio
 codecov
 python-json-logger
 middle-auth-client>=0.1.6

@@ -1,35 +1,44 @@
-from flask import Flask
-from flask.logging import default_handler
-from flask_cors import CORS
 import sys
 import logging
 import os
 import time
 import json
-import numpy as np
 import datetime
-from . import config
+
 import redis
+import numpy as np
+
+from flask import Flask
+from flask.logging import default_handler
+from flask_cors import CORS
+from flask_socketio import SocketIO, send, emit
 from rq import Queue
 
+from . import config
+from .app_utils import CustomJsonEncoder
 from pcgserver.app import cg_app_blueprint, meshing_app_blueprint
 from pcgserver.logging import jsonformatter
 
 os.environ['TRAVIS_BRANCH'] = "IDONTKNOWWHYINEEDTHIS"
+socketio = SocketIO()
 
 
-class CustomJsonEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        elif isinstance(obj, datetime.datetime):
-            return obj.__str__()
-        return json.JSONEncoder.default(self, obj)
+@socketio.on('test1')
+def test(data):
+    print('########## Received ' + str(data))
+
+
+@socketio.on('connect')
+def test():
+    print('########## connected!')
+    emit('test2', {'data':'kablooey'})
 
 
 def create_app(test_config=None):
+    template_dir = os.path.abspath('../templates')
     app = Flask(__name__)
     app.json_encoder = CustomJsonEncoder
+    app.sio = socketio
 
     CORS(app, expose_headers='WWW-Authenticate')
 
@@ -40,7 +49,14 @@ def create_app(test_config=None):
 
     app.register_blueprint(cg_app_blueprint.bp)
     app.register_blueprint(meshing_app_blueprint.bp)
-    # app.register_blueprint(manifest_app_blueprint.bp)
+
+    with app.app_context():
+        if app.config['USE_REDIS_JOBS']:
+            socketio.init_app(app,
+                            message_queue=app.config['REDIS_URL'],
+                            logger=True,
+                            engineio_logger=True,
+                            channel='socktest')
 
     return app
 
@@ -55,7 +71,6 @@ def configure_app(app):
 
 
     # Configure logging
-    # handler = logging.FileHandler(app.config['LOGGING_LOCATION'])
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(app.config['LOGGING_LEVEL'])
     formatter = jsonformatter.JsonFormatter(

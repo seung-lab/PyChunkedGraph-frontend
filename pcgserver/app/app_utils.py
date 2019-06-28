@@ -6,8 +6,11 @@ import sys
 import numpy as np
 import logging
 import time
-import redis
 import functools
+import json
+import datetime
+
+import redis
 
 from pcgserver.logging import jsonformatter, flask_log_db
 from pychunkedgraph.backend import chunkedgraph
@@ -18,6 +21,15 @@ cache = {}
 class DoNothingCreds(credentials.Credentials):
     def refresh(self, request):
         pass
+
+
+class CustomJsonEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, datetime.datetime):
+            return obj.__str__()
+        return json.JSONEncoder.default(self, obj)        
 
 
 def get_bigtable_client(config):
