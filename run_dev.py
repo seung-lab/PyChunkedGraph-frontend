@@ -1,3 +1,6 @@
+from gevent import monkey
+monkey.patch_all()
+
 import sys
 import os
 
@@ -5,6 +8,7 @@ from werkzeug.serving import WSGIRequestHandler
 from flask import render_template
 
 from pcgserver.app import create_app
+from pychunkedgraph.api import testing
 
 app = create_app()
 
@@ -14,10 +18,11 @@ def index():
 
 if __name__ == '__main__':
 
-    assert len(sys.argv) == 2
     HOME = os.path.expanduser("~")
 
-    port = int(sys.argv[1])
+    port = 4000
+    if len(sys.argv) == 2:
+        port = int(sys.argv[1])
 
     # Set HTTP protocol
     WSGIRequestHandler.protocol_version = "HTTP/1.1"

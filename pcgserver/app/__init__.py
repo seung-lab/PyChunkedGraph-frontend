@@ -23,22 +23,22 @@ os.environ['TRAVIS_BRANCH'] = "IDONTKNOWWHYINEEDTHIS"
 socketio = SocketIO()
 
 
-@socketio.on('message')
+@socketio.on('test1')
 def test(data):
-    print(data)
+    print('########## Received ' + str(data))
 
 
 @socketio.on('connect')
 def test():
-    print('connecteddddddddddddddddddddddddddddddddd')
-    emit('message', 'booya')
+    print('########## connected!')
+    emit('test2', {'data':'kablooey'})
 
 
 def create_app(test_config=None):
     template_dir = os.path.abspath('../templates')
-    print('template dir ======= ', template_dir)
     app = Flask(__name__)
     app.json_encoder = CustomJsonEncoder
+    app.sio = socketio
 
     CORS(app, expose_headers='WWW-Authenticate')
 
@@ -55,7 +55,8 @@ def create_app(test_config=None):
             socketio.init_app(app,
                             message_queue=app.config['REDIS_URL'],
                             logger=True,
-                            engineio_logger=True)
+                            engineio_logger=True,
+                            channel='socktest')
 
     return app
 
