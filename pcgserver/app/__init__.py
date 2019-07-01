@@ -16,7 +16,7 @@ from rq import Queue
 
 from . import config
 from .app_utils import CustomJsonEncoder
-from pcgserver.app import cg_app_blueprint, meshing_app_blueprint
+from pcgserver.app.blueprints import index, segmentation, meshing
 from pcgserver.logging import jsonformatter
 
 os.environ['TRAVIS_BRANCH'] = "IDONTKNOWWHYINEEDTHIS"
@@ -47,8 +47,10 @@ def create_app(test_config=None):
     if test_config is not None:
         app.config.update(test_config)
 
-    app.register_blueprint(cg_app_blueprint.bp)
-    app.register_blueprint(meshing_app_blueprint.bp)
+    # register blueprints
+    app.register_blueprint(index.bp)
+    app.register_blueprint(segmentation.bp)
+    app.register_blueprint(meshing.bp)
 
     with app.app_context():
         if app.config['USE_REDIS_JOBS']:

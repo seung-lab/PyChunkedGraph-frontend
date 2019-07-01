@@ -2,7 +2,7 @@
 [run]
 branch = True
 concurrency = "multiprocessing"
-source = pychunkedgraph-server
+source = pcgserver
 omit =
     *test*
     *benchmarking/*

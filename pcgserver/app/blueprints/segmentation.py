@@ -11,7 +11,7 @@ import threading
 from flask import Blueprint, request, make_response, jsonify, current_app,\
     redirect, url_for, after_this_request, Response, render_template
 
-from pcgserver.app import app_utils, meshing_app_blueprint
+from pcgserver.app import app_utils
 from pychunkedgraph.backend import chunkedgraph_exceptions as cg_exceptions, \
     chunkedgraph_comp as cg_comp
 from pychunkedgraph.api import segmentation
@@ -19,7 +19,7 @@ from pychunkedgraph.api import testing
 from middle_auth_client import auth_required, auth_requires_roles
 
 __version__ = 'fafb.1.2'
-bp = Blueprint('pcgserver', __name__, url_prefix="/segmentation")
+bp = Blueprint('segmentation', __name__, url_prefix='/segmentation')
 
 # -------------------------------
 # ------ Access control and index
