@@ -11,7 +11,7 @@ import threading
 from flask import Blueprint, request, make_response, jsonify, current_app,\
     redirect, url_for, after_this_request, Response, render_template
 
-from pcgserver.app import app_utils
+from pcgserver import utils
 from pychunkedgraph.backend import chunkedgraph_exceptions as cg_exceptions, \
     chunkedgraph_comp as cg_comp
 from pychunkedgraph.api import segmentation
@@ -27,7 +27,6 @@ bp = Blueprint('segmentation', __name__, url_prefix='/segmentation')
 
 
 @bp.route('/')
-@bp.route("/index")
 def index():
     greeting = 'hello there'
     current_app.test_q.enqueue(
@@ -66,7 +65,7 @@ def after_request(response):
     current_app.logger.debug("Response time: %.3fms" % dt)
 
     try:
-        log_db = app_utils.get_log_db(current_app.table_id)
+        log_db = utils.get_log_db(current_app.table_id)
         log_db.add_success_log(user_id="", user_ip="",
                                request_time=current_app.request_start_date,
                                response_time=dt, url=request.url,
@@ -155,7 +154,7 @@ def sleep_me(sleep):
 def handle_info(table_id):
     current_app.request_type = "info"
 
-    cg = app_utils.get_cg(table_id)
+    cg = utils.get_cg(table_id)
 
     return jsonify(cg.dataset_info)
 
@@ -192,10 +191,10 @@ def handle_root_2(table_id, atomic_id):
 def handle_root_main(table_id, atomic_id, timestamp):
     current_app.request_type = "root"
 
-    cg = app_utils.get_cg(table_id)
+    cg = utils.get_cg(table_id)
     root_id = cg.get_root(np.uint64(atomic_id), time_stamp=timestamp)
 
-    return app_utils.tobinary(root_id)
+    return utils.tobinary(root_id)
 
 
 @bp.route('/1.0/<table_id>/graph/merge', methods=['POST', 'GET'])
@@ -209,10 +208,10 @@ def handle_merge(table_id):
     current_app.logger.debug(nodes)
     assert len(nodes) == 2
 
-    cg = app_utils.get_cg(table_id)
+    cg = utils.get_cg(table_id)
     new_root = segmentation.merge(cg, nodes, user_id)
 
-    return app_utils.tobinary(new_root)
+    return utils.tobinary(new_root)
 
 
 @bp.route('/1.0/<table_id>/graph/split', methods=['POST', 'GET'])
@@ -226,10 +225,10 @@ def handle_split(table_id):
     current_app.logger.debug(data)
 
     # Call ChunkedGraph
-    cg = app_utils.get_cg(table_id)
+    cg = utils.get_cg(table_id)
     new_roots = segmentation.split(cg, data, user_id)
 
-    return app_utils.tobinary(new_roots)
+    return utils.tobinary(new_roots)
 
 
 @bp.route('/1.0/<table_id>/segment/<parent_id>/children',
@@ -237,12 +236,12 @@ def handle_split(table_id):
 def handle_children(table_id, parent_id):
     current_app.request_type = "children"
 
-    cg = app_utils.get_cg(table_id)
+    cg = utils.get_cg(table_id)
 
     parent_id = np.uint64(parent_id)
     children = segmentation.get_children(cg, parent_id)
     
-    return app_utils.tobinary(children)
+    return utils.tobinary(children)
 
 
 @bp.route('/1.0/<table_id>/segment/<root_id>/leaves', methods=['POST', 'GET'])
@@ -251,10 +250,10 @@ def handle_leaves(table_id, root_id):
 
     bounds = request.args.get('bounds', None)
 
-    cg = app_utils.get_cg(table_id)
+    cg = utils.get_cg(table_id)
     atomic_ids = segmentation.get_leaf_nodes(cg, root_id, bounds)
 
-    return app_utils.tobinary(atomic_ids)
+    return utils.tobinary(atomic_ids)
 
 
 @bp.route('/1.0/<table_id>/segment/<root_id>/subgraph', methods=['POST', 'GET'])
@@ -263,17 +262,17 @@ def handle_subgraph(table_id, root_id):
 
     bounds = request.args.get('bounds', None)
 
-    cg = app_utils.get_cg(table_id)
+    cg = utils.get_cg(table_id)
     atomic_edges = segmentation.get_atomic_edges(cg, root_id, bounds)
 
-    return app_utils.tobinary(atomic_ids)    
+    return utils.tobinary(atomic_ids)    
 
 
 @bp.route('/1.0/<table_id>/segment/<root_id>/change_log', methods=['POST', 'GET'])
 def change_log(table_id, root_id):
     current_app.request_type = 'change_log'
 
-    cg = app_utils.get_cg(table_id)
+    cg = utils.get_cg(table_id)
 
     change_log = segmentation.get_change_log(
         cg, root_id,
@@ -287,7 +286,7 @@ def change_log(table_id, root_id):
 def merge_log(table_id, root_id):
     current_app.request_type = 'merge_log'
 
-    cg = app_utils.get_cg(table_id)
+    cg = utils.get_cg(table_id)
 
     merge_log = segmentation.get_merge_log(
         cg, root_id,
@@ -308,7 +307,7 @@ def handle_contact_sites(table_id, root_id):
             [b.split('-') for b in bounds.split('_')], dtype=np.int).T
         
 
-    cg = app_utils.get_cg(table_id)
+    cg = utils.get_cg(table_id)
 
     cs_dict = cg_comp.get_contact_sites(cg, np.uint64(root_id),
                                         bounding_box = bounding_box,

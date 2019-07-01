@@ -15,7 +15,7 @@ from flask_socketio import SocketIO, send, emit
 from rq import Queue
 
 from . import config
-from .app_utils import CustomJsonEncoder
+from pcgserver.utils import CustomJsonEncoder
 from pcgserver.app.blueprints import index, segmentation, meshing
 from pcgserver.logging import jsonformatter
 

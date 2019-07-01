@@ -4,7 +4,7 @@ import json
 import numpy as np
 
 
-from pcgserver.app import app_utils
+from pcgserver import utils
 from pychunkedgraph.meshing import meshgen_utils, meshgen
 from pychunkedgraph.backend import chunkedgraph
 
@@ -61,7 +61,7 @@ def handle_preview_meshes(table_id, node_id):
 
     node_id = np.uint64(node_id)
 
-    cg = app_utils.get_cg(table_id)
+    cg = utils.get_cg(table_id)
 
     if "seg_ids" in data:
         seg_ids = data["seg_ids"]
@@ -84,12 +84,12 @@ def handle_preview_meshes(table_id, node_id):
 
 @bp.route('/1.0/<table_id>/<node_id>/validfragments', methods=['POST', 'GET'])
 def handle_valid_frags(table_id, node_id):
-    cg = app_utils.get_cg(table_id)
+    cg = utils.get_cg(table_id)
 
     seg_ids = meshgen_utils.get_highest_child_nodes_with_meshes(
         cg, np.uint64(node_id), stop_layer=1, verify_existence=True)
 
-    return app_utils.tobinary(seg_ids)
+    return utils.tobinary(seg_ids)
 
 
 ## MANIFEST --------------------------------------------------------------------
@@ -116,7 +116,7 @@ def handle_get_manifest(table_id, node_id):
     verify = request.args.get('verify', False)
     verify = verify in ['True', 'true', '1', True]
 
-    cg = app_utils.get_cg(table_id)
+    cg = utils.get_cg(table_id)
 
     seg_ids = meshgen_utils.get_highest_child_nodes_with_meshes(
         cg, np.uint64(node_id), stop_layer=2, start_layer=start_layer,
