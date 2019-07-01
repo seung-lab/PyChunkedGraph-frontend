@@ -153,10 +153,7 @@ def sleep_me(sleep):
 @bp.route('/1.0/<table_id>/info', methods=['GET'])
 def handle_info(table_id):
     current_app.request_type = "info"
-
-    cg = utils.get_cg(table_id)
-
-    return jsonify(cg.dataset_info)
+    return jsonify(utils.get_cg(table_id).dataset_info)
 
 
 @bp.route('/1.0/<table_id>/graph/root', methods=['POST', 'GET'])

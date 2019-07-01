@@ -5,10 +5,9 @@ from pcgserver.app import create_app
 
 @pytest.fixture
 def app():
-    app = create_app(
-        {
+    app = create_app({
             'TESTING': True,
-            'BIGTABLE_CONFIG': {
+            'BIGTABLE': {
                 'emulate': True
             }
         }

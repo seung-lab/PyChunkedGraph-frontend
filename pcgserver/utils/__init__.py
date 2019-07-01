@@ -14,6 +14,7 @@ import redis
 
 from pcgserver.logging import jsonformatter, flask_log_db
 from pychunkedgraph.backend import chunkedgraph
+from pychunkedgraph.utils.cg_utils import get_cg as get_cg_instance
 
 cache = {}
 
@@ -32,61 +33,12 @@ class CustomJsonEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)        
 
 
-def get_bigtable_client(config):
-    project_id = config.get('project_id', 'pychunkedgraph')
-
-    if config.get('EMULATE', False):
-        credentials = DoNothingCreds()
-    else:
-        credentials, project_id = default_creds()
-
-    client = bigtable.Client(admin=True,
-                             project=project_id,
-                             credentials=credentials)
-    return client
-
-
-def get_datastore_client(config):
-    project_id = config.get('project_id', 'pychunkedgraph')
-
-    if config.get('emulate', False):
-        credentials = DoNothingCreds()
-    else:
-        credentials, project_id = default_creds()
-
-    client = datastore.Client(project=project_id, credentials=credentials)
-    return client
-
-
 def get_cg(table_id):
     assert table_id.startswith("fly")
 
     if table_id not in cache:
-        instance_id = current_app.config['CHUNKGRAPH_INSTANCE_ID']
-        client = get_bigtable_client(current_app.config)
-
-        # Create ChunkedGraph logging
-        logger = logging.getLogger(f"{instance_id}/{table_id}")
-        logger.setLevel(current_app.config['LOGGING_LEVEL'])
-
-        # prevent duplicate logs from Flasks(?) parent logger
-        logger.propagate = False
-
-        handler = logging.StreamHandler(sys.stdout)
-        handler.setLevel(current_app.config['LOGGING_LEVEL'])
-        formatter = jsonformatter.JsonFormatter(
-            fmt=current_app.config['LOGGING_FORMAT'],
-            datefmt=current_app.config['LOGGING_DATEFORMAT'])
-        formatter.converter = time.gmtime
-        handler.setFormatter(formatter)
-
-        logger.addHandler(handler)
-
-        # Create ChunkedGraph
-        cache[table_id] = chunkedgraph.ChunkedGraph(table_id=table_id,
-                                                    instance_id=instance_id,
-                                                    client=client,
-                                                    logger=logger)
+        cache[table_id] = get_cg_instance(current_app.config, table_id = table_id)
+    
     current_app.table_id = table_id
     return cache[table_id]
 

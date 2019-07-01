@@ -19,19 +19,9 @@ from pcgserver.utils import CustomJsonEncoder
 from pcgserver.app.blueprints import index, segmentation, meshing
 from pcgserver.logging import jsonformatter
 
-os.environ['TRAVIS_BRANCH'] = "IDONTKNOWWHYINEEDTHIS"
+os.environ['TRAVIS_BRANCH'] = 'IDONTKNOWWHYINEEDTHIS'
+
 socketio = SocketIO()
-
-
-@socketio.on('test1')
-def test(data):
-    print('########## Received ' + str(data))
-
-
-@socketio.on('connect')
-def test():
-    print('########## connected!')
-    emit('test2', {'data':'kablooey'})
 
 
 def create_app(test_config=None):
@@ -47,13 +37,13 @@ def create_app(test_config=None):
     if test_config is not None:
         app.config.update(test_config)
 
-    # register blueprints
     app.register_blueprint(index.bp)
     app.register_blueprint(segmentation.bp)
     app.register_blueprint(meshing.bp)
 
     with app.app_context():
         if app.config['USE_REDIS_JOBS']:
+            # TODO use env var/config for channel
             socketio.init_app(app,
                             message_queue=app.config['REDIS_URL'],
                             logger=True,
@@ -64,7 +54,6 @@ def create_app(test_config=None):
 
 
 def configure_app(app):
-    # Load logging scheme from config.py
     app_settings = os.getenv('APP_SETTINGS')
     if not app_settings:
         app.config.from_object(config.BaseConfig)
@@ -74,7 +63,7 @@ def configure_app(app):
 
     # Configure logging
     handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(app.config['LOGGING_LEVEL'])
+    handler.setLevel(app.config.get('LOGGING_LEVEL', logging.DEBUG))
     formatter = jsonformatter.JsonFormatter(
         fmt=app.config['LOGGING_FORMAT'],
         datefmt=app.config['LOGGING_DATEFORMAT'])

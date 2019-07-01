@@ -1,5 +1,5 @@
 from gevent import monkey
-monkey.patch_all()
+monkey.patch_all(thread=False)
 
 import sys
 import os
@@ -34,5 +34,5 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0',
             port=port,
             debug=True,
-            threaded=True,
+            threaded=False,
             ssl_context='adhoc')

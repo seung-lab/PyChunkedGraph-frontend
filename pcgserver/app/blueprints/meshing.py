@@ -8,7 +8,6 @@ from pcgserver import utils
 from pychunkedgraph.meshing import meshgen_utils, meshgen
 from pychunkedgraph.backend import chunkedgraph
 
-# os.environ['TRAVIS_BRANCH'] = "IDONTKNOWWHYINEEDTHIS"
 
 __version__ = 'fafb.1.2'
 bp = Blueprint('pychunkedgraph_meshing', __name__, url_prefix="/meshing")
