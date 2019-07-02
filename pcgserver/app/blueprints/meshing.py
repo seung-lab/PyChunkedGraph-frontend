@@ -22,17 +22,6 @@ def index():
     return "Meshing Server -- " + __version__
 
 
-@bp.route
-def home():
-    resp = make_response()
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    acah = "Origin, X-Requested-With, Content-Type, Accept"
-    resp.headers["Access-Control-Allow-Headers"] = acah
-    resp.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-    resp.headers["Connection"] = "keep-alive"
-    return resp
-
-
 # ------------------------------------------------------------------------------
 
 def _mesh_lvl2_nodes(serialized_cg_info, lvl2_nodes):

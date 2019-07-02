@@ -26,26 +26,17 @@ bp = Blueprint('segmentation', __name__, url_prefix='/segmentation')
 # -------------------------------
 
 
-@bp.route('/')
+@bp.route('/index')
 def index():
+    print('aaaaaaaaaaaaaaaaaaaaaaa')
     greeting = 'hello there'
     current_app.test_q.enqueue(
         testing.foo_test,
         job_timeout='1m',
         args = (greeting,)
     )
-    return render_template('index.html')
-
-
-@bp.route
-def home():
-    resp = make_response()
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    acah = "Origin, X-Requested-With, Content-Type, Accept"
-    resp.headers["Access-Control-Allow-Headers"] = acah
-    resp.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-    resp.headers["Connection"] = "keep-alive"
-    return resp
+    return 'blah'
+    # return render_template('index.html')
 
 
 # -------------------------------
@@ -144,10 +135,10 @@ def api_exception(e):
 
 @bp.route("/sleep/<int:sleep>")
 def sleep_me(sleep):
-    current_app.request_type = "sleep"
+    current_app.request_type = 'sleep'
 
     time.sleep(sleep)
-    return "zzz... {} ... awake".format(sleep)
+    return f'zzz... {sleep} ... awake'
 
 
 @bp.route('/1.0/<table_id>/info', methods=['GET'])
