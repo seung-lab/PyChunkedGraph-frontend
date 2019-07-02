@@ -1,28 +1,5 @@
 import time
 import pytest
-from pcgserver.app import create_app
-
-
-@pytest.fixture
-def app():
-    app = create_app({
-            'TESTING': True,
-            'BIGTABLE': {
-                'emulate': True
-            }
-        }
-    )
-    yield app
-
-
-@pytest.fixture
-def client(app):
-    return app.test_client()
-
-# TODO convert this to an actual self contained test with emulated backend
-# and use app factory to create testing app and client objects
-
-# TODO setup fixture that puts data in backend before running client tests
 
 
 def request(test_client, op, body, post=True):
