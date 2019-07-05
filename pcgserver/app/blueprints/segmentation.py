@@ -28,7 +28,6 @@ bp = Blueprint('segmentation', __name__, url_prefix='/segmentation')
 
 @bp.route('/index')
 def index():
-    print('aaaaaaaaaaaaaaaaaaaaaaa')
     greeting = 'hello there'
     current_app.test_q.enqueue(
         testing.foo_test,
